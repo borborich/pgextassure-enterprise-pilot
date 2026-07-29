@@ -1,0 +1,6 @@
+comment = 'Intentionally unsafe reference extension expected to be blocked'
+default_version = '1.0'
+module_pathname = '$libdir/pgextassure_rejected'
+relocatable = true
+superuser = true
+trusted = true

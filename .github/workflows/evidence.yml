@@ -1,0 +1,103 @@
+name: Signed enterprise admission evidence
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    name: ${{ matrix.case }} decision
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      attestations: write
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - case: approved
+            expected_gate: pass
+          - case: rejected
+            expected_gate: blocked
+
+    steps:
+      - name: Check out pilot inputs
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Prepare evidence directory
+        shell: bash
+        run: mkdir -p "evidence/${{ matrix.case }}"
+
+      - name: Create and verify evidence
+        id: assessment
+        continue-on-error: true
+        uses: borborich/pgextassure@c0ee5988d24456194afaa0de84e2e271c062b14b # v0.1.0-alpha.5
+        with:
+          path: extensions/${{ matrix.case }}
+          policy: policies/enterprise.json
+          evidence-output: evidence/${{ matrix.case }}/evidence.zip
+          evidence-predicate-output: evidence/${{ matrix.case }}/predicate.json
+          evidence-sbom-output: evidence/${{ matrix.case }}/sbom.spdx.json
+          evidence-created-on: "2026-07-29"
+          component-name: pgextassure-reference-${{ matrix.case }}
+          component-version: reference-1.0
+          python-version: "3.14"
+
+      - name: Validate expected decision
+        env:
+          ASSESSMENT_OUTCOME: ${{ steps.assessment.outcome }}
+          CASE_NAME: ${{ matrix.case }}
+          EXPECTED_GATE: ${{ matrix.expected_gate }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          case = os.environ["CASE_NAME"]
+          expected = os.environ["EXPECTED_GATE"]
+          outcome = os.environ["ASSESSMENT_OUTCOME"]
+          root = Path("evidence") / case
+          predicate = json.loads(
+              (root / "predicate.json").read_text(encoding="utf-8")
+          )
+          sbom = json.loads(
+              (root / "sbom.spdx.json").read_text(encoding="utf-8")
+          )
+
+          assert (root / "evidence.zip").is_file()
+          assert predicate["result"]["gate"] == expected
+          assert predicate["result"]["policy_digest"]
+          assert sbom["spdxVersion"] == "SPDX-2.3"
+          assert outcome == ("success" if expected == "pass" else "failure")
+          PY
+
+      - name: Attest evidence decision
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
+        with:
+          subject-path: evidence/${{ matrix.case }}/evidence.zip
+          predicate-type: https://github.com/borborich/pgextassure/attestation/evidence/v1
+          predicate-path: evidence/${{ matrix.case }}/predicate.json
+
+      - name: Attest analyzed-source inventory
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
+        with:
+          subject-path: evidence/${{ matrix.case }}/evidence.zip
+          sbom-path: evidence/${{ matrix.case }}/sbom.spdx.json
+
+      - name: Retain pilot evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pgextassure-${{ matrix.case }}-evidence
+          path: evidence/${{ matrix.case }}/
+          if-no-files-found: error
+          retention-days: 30

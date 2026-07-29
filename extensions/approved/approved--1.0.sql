@@ -1,0 +1,14 @@
+CREATE SCHEMA IF NOT EXISTS pgextassure_reference;
+
+CREATE FUNCTION pgextassure_reference.current_database_name()
+RETURNS name
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = pg_catalog, pg_temp
+AS $function$
+    SELECT pg_catalog.current_database();
+$function$;
+
+REVOKE ALL
+ON FUNCTION pgextassure_reference.current_database_name()
+FROM PUBLIC;

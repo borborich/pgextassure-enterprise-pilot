@@ -1,0 +1,5 @@
+comment = 'Minimal reference extension expected to pass admission'
+default_version = '1.0'
+relocatable = false
+superuser = false
+trusted = false
