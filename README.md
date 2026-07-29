@@ -92,3 +92,26 @@ Both bundles independently passed:
 
 The exact policy digest in both decisions is
 `sha256:e81e9a9ae7420ac63ac2b4829f56c91ce4ca898b8dfa33fd77a07d8638b881ae`.
+
+## Verified alpha6 review run
+
+The [alpha6 workflow run](https://github.com/borborich/pgextassure-enterprise-pilot/actions/runs/30448603260)
+was produced from pilot commit
+`41b47375b78e2110d631b9a1ee195fed9a9aaa74`.
+
+| Case | Gate | Tasks | Evidence SHA-256 | Review Pack SHA-256 |
+| --- | --- | ---: | --- | --- |
+| approved | `pass` | 0 | `72bf3789d819532a64dbd720f984f6736b60d3244a74e43bc8c8b2069951c021` | `2efc975874d6494c0d525b3537efea21c4a2d29d74cf28bc7983024f6d8be517` |
+| rejected | `blocked` | 5 unresolved | `33225d0c6e8dd535e7b6c09583907f005c4bd31e45fd72ba0630f9960ed72fdf` | `63f36c9c365b196676ecf9aea1994cf983e9e51a984fcd0d6a254c674ac0b8dc` |
+
+Both downloaded cases independently passed:
+
+- Evidence Bundle 1.0 offline verification;
+- Decision Ledger 1.0 offline verification;
+- the custom admission attestation;
+- provenance verification for `review.json`, `decisions.json`, and
+  `review-verification.json`.
+
+The alpha6 policy digest in both decisions is
+`sha256:9eb2358be567ae40f426e048307584c39c8a8daef643e4bd0ad24812d1292b64`.
+Both verification summaries report `can_grant_admission: false`.
