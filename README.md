@@ -124,6 +124,31 @@ The alpha6 policy digest in both decisions is
 `sha256:9eb2358be567ae40f426e048307584c39c8a8daef643e4bd0ad24812d1292b64`.
 Both verification summaries report `can_grant_admission: false`.
 
+## Verified alpha8 release run
+
+The [alpha8 workflow run](https://github.com/borborich/pgextassure-enterprise-pilot/actions/runs/30466904332)
+was produced from pilot commit
+`75405f27f71e6dbde807a63ea34d5506be928b48` and immutable PgExtAssure
+release commit `e6a265640a98a5d0ff80357f1159d45a4912b04f`.
+
+| Case | Gate | Evidence Bundle SHA-256 |
+| --- | --- | --- |
+| approved | `pass` | `a54f431d665884892b552f724b7de9fea895213516c4921d5ede88f0ef5f264b` |
+| rejected | `blocked` | `63bf60f8602ff85d2826fda93b29a039daf3834c1ca7c2a115dfa2fb0321a829` |
+
+Both downloaded bundles independently passed:
+
+- Evidence Bundle 1.0 offline verification using the published alpha8 wheel;
+- exact policy and Scope Plan correlation;
+- the custom admission and SPDX 2.3 attestations;
+- provenance verification for the review pack, ledger, and offline
+  verification summary.
+
+The verified tool version is `0.1.0-alpha.8`, the ruleset version is
+`2026-07-29.6`, and the exact policy digest is
+`sha256:c746a68e0203dfff539d745c57967e1b8fef24b6a4c70c5ab5072095beb327b5`.
+The approved gate is `pass`; the intentionally unsafe case remains `blocked`.
+
 ## Verified alpha7 scope-bound run
 
 The [alpha7 workflow run](https://github.com/borborich/pgextassure-enterprise-pilot/actions/runs/30453940591)
