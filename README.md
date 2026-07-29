@@ -7,7 +7,7 @@ admission evidence. It demonstrates two intentionally different decisions:
 - `extensions/rejected`: an intentionally unsafe extension expected to be
   blocked without losing its evidence.
 
-The workflow pins PgExtAssure `v0.1.0-alpha.7` by immutable release commit SHA
+The workflow pins PgExtAssure `v0.1.0-alpha.8` by immutable release commit SHA
 and supplies a reviewed Scope Plan 1.0. It creates an Evidence Bundle 1.0,
 Agent Review Pack 1.0, and offline-verified Decision Ledger 1.0. It publishes
 GitHub OIDC/Sigstore attestations for:
@@ -42,7 +42,7 @@ gh attestation verify evidence.zip \
 Verify the separate SPDX attestation by replacing the predicate type with
 `https://spdx.dev/Document/v2.3`.
 
-After installing PgExtAssure `v0.1.0-alpha.7`, verify the internal bundle
+After installing PgExtAssure `v0.1.0-alpha.8`, verify the internal bundle
 contract without network access:
 
 ```bash

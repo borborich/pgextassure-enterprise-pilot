@@ -39,7 +39,7 @@ jobs:
       - name: Create and verify evidence
         id: assessment
         continue-on-error: true
-        uses: borborich/pgextassure@ed6c354e5c629d9c0ede3d617524fbc8acf76c18 # v0.1.0-alpha.7
+        uses: borborich/pgextassure@e6a265640a98a5d0ff80357f1159d45a4912b04f # v0.1.0-alpha.8
         with:
           path: extensions/${{ matrix.case }}
           scope-plan: scopes/extension.json
