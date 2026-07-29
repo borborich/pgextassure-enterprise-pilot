@@ -39,16 +39,17 @@ jobs:
       - name: Create and verify evidence
         id: assessment
         continue-on-error: true
-        uses: borborich/pgextassure@7f3e3c87051a83ae4a65695e3c32bb75d023527b # v0.1.0-alpha.6
+        uses: borborich/pgextassure@ed6c354e5c629d9c0ede3d617524fbc8acf76c18 # v0.1.0-alpha.7
         with:
           path: extensions/${{ matrix.case }}
+          scope-plan: scopes/extension.json
           policy: policies/enterprise.json
           evidence-output: evidence/${{ matrix.case }}/evidence.zip
           evidence-predicate-output: evidence/${{ matrix.case }}/predicate.json
           evidence-sbom-output: evidence/${{ matrix.case }}/sbom.spdx.json
           evidence-created-on: "2026-07-29"
           component-name: pgextassure-reference-${{ matrix.case }}
-          component-version: reference-1.0
+          component-version: reference-1.1
           python-version: "3.14"
 
       - name: Create Agent Review Pack
@@ -61,6 +62,7 @@ jobs:
           set -euo pipefail
           python -I -m pgextassure scan \
             "extensions/$CASE_NAME" \
+            --scope-plan scopes/extension.json \
             --policy policies/enterprise.json \
             --format review-json \
             --output "evidence/$CASE_NAME/review.json"
@@ -93,6 +95,7 @@ jobs:
           import json
           import os
           from pathlib import Path
+          import zipfile
 
           case = os.environ["CASE_NAME"]
           expected = os.environ["EXPECTED_GATE"]
@@ -114,8 +117,17 @@ jobs:
           review_verification = json.loads(
               (root / "review-verification.json").read_text(encoding="utf-8")
           )
+          with zipfile.ZipFile(root / "evidence.zip") as archive:
+              report = json.loads(archive.read("report.json"))
+              bundled_scope = archive.read("inputs/scope-plan.json")
 
           assert (root / "evidence.zip").is_file()
+          assert bundled_scope == Path("scopes/extension.json").read_bytes()
+          assert report["schema_version"] == "1.4"
+          assert report["scope"]["schema_version"] == "1.0"
+          assert report["scope"]["roots"] == ["."]
+          assert report["scope"]["exclusions"] == []
+          assert report["scope"]["plan"]["digest"].startswith("sha256:")
           assert predicate["result"]["gate"] == expected
           assert predicate["result"]["policy_digest"]
           assert sbom["spdxVersion"] == "SPDX-2.3"
