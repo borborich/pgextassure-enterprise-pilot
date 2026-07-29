@@ -7,12 +7,13 @@ admission evidence. It demonstrates two intentionally different decisions:
 - `extensions/rejected`: an intentionally unsafe extension expected to be
   blocked without losing its evidence.
 
-The workflow pins PgExtAssure `v0.1.0-alpha.5` by immutable release commit SHA.
-It creates an Evidence Bundle 1.0, verifies it offline, and publishes two
-GitHub OIDC/Sigstore attestations for each bundle:
+The workflow pins PgExtAssure `v0.1.0-alpha.6` by immutable release commit SHA.
+It creates an Evidence Bundle 1.0, Agent Review Pack 1.0, and offline-verified
+Decision Ledger 1.0. It publishes GitHub OIDC/Sigstore attestations for:
 
 1. the PgExtAssure admission predicate;
-2. the SPDX 2.3 analyzed-source inventory.
+2. the SPDX 2.3 analyzed-source inventory;
+3. the review pack, ledger, and offline verification result.
 
 The rejected case is expected to make the scanner step fail. The workflow
 retains and attests that blocked decision, validates it, and succeeds only when
@@ -35,7 +36,7 @@ gh attestation verify evidence.zip \
 Verify the separate SPDX attestation by replacing the predicate type with
 `https://spdx.dev/Document/v2.3`.
 
-After installing PgExtAssure `v0.1.0-alpha.5`, verify the internal bundle
+After installing PgExtAssure `v0.1.0-alpha.6`, verify the internal bundle
 contract without network access:
 
 ```bash
@@ -43,11 +44,20 @@ pgextassure evidence verify evidence.zip \
   --format json \
   --predicate-output verified-predicate.json \
   --sbom-output verified-sbom.spdx.json
+
+pgextassure review verify \
+  review.json \
+  decisions.json
 ```
 
 Cryptographic verification establishes provenance and integrity. PgExtAssure
 verification establishes the internal evidence contract. Neither is a security
 certificate or proof that an extension is safe.
+
+The supplied ledger intentionally leaves every task `unresolved`. This proves
+the pack/ledger correlation and offline verification path without pretending
+that CI performed expert review. Both artifacts state
+`can_grant_admission: false`.
 
 ## Trust boundaries
 
