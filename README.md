@@ -123,3 +123,30 @@ Both downloaded cases independently passed:
 The alpha6 policy digest in both decisions is
 `sha256:9eb2358be567ae40f426e048307584c39c8a8daef643e4bd0ad24812d1292b64`.
 Both verification summaries report `can_grant_admission: false`.
+
+## Verified alpha7 scope-bound run
+
+The [alpha7 workflow run](https://github.com/borborich/pgextassure-enterprise-pilot/actions/runs/30453940591)
+was produced from pilot commit
+`553661d7d96584ddb5fd8e032989bfe5561407c6` and immutable PgExtAssure
+release commit `ed6c354e5c629d9c0ede3d617524fbc8acf76c18`.
+
+| Case | Gate | Tasks | Evidence SHA-256 | Review Pack SHA-256 | Decision Ledger SHA-256 |
+| --- | --- | ---: | --- | --- | --- |
+| approved | `pass` | 0 | `622abacf32e5aa259f88f60eec60bc417214673ce4a5b17c0544b984ea5fdd3e` | `f672ec02926c8cebb7bb298d3df9c375e26c7eeb79d094ffe88503be82f10bba` | `61cb965f5d9a26aa8356bbdfe5ec86ddfc2520cd0178a3fff0edad5c30795e88` |
+| rejected | `blocked` | 5 unresolved | `70c26e6e3b380a8d9e287b83468dce1a9a9edb058b9aede599476dfab4be7d52` | `714ed72bb21b807ef132ee5b8d96579058518ccb01d1a8ce4d1fe2e340430772` | `be9c48ee4e7621e246d913070f11e44ae9ec31d0c420d66b2ac26485d3f1ed5d` |
+
+Both downloaded cases independently passed:
+
+- Evidence Bundle 1.0 offline verification;
+- exact Scope Plan 1.0 byte and metadata correlation;
+- Decision Ledger 1.0 offline verification;
+- the custom admission and SPDX attestations;
+- provenance verification for the review pack, ledger, and verification
+  summary.
+
+The exact scope-plan digest in both reports is
+`sha256:b60b25ccf9ab760e1fb0be1d56ba5e3089edffaee60761c710a7b56717b23321`.
+The exact policy digest is
+`sha256:c746a68e0203dfff539d745c57967e1b8fef24b6a4c70c5ab5072095beb327b5`.
+Both verification summaries report `can_grant_admission: false`.
